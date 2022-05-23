@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample08" aria-controls="navbarsExample08" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-md-center" id="navbarsExample08">
+        <ul class="navbar-nav">
+          <li class="navbar-brand active">
+            <div >Resource Calculator</div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">About</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="container">
+      <div id="update-alert" class="fixed-top alert alert-success" role="alert" style="display: none;">
+      </div>
+
+      <br>
+
+      <div class="row required-fields">
+        <div class="col-4 count-container required">
+          <div class="card text-center">
+            <div class="card-header">
+              Expected count per threshold
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-6">
+                  <div class="mb-3">
+                    <input type="number" class="form-control text-center" id="counter-number" placeholder="0">
+                  </div>
+                </div>
+                <span class="col-2 align-middle">
+                  per
+                </span>
+                <div class="col-4">
+                  <select id="counter-increment" class="form-select" aria-label="Default select example">
+                    <option value="ms">ms</option>
+                    <option selected value="s">second</option>
+                    <option value="m">minute</option>
+                    <option value="h">hour</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="accordion accordion-flush" id="accordion-count">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-count-about">
+                  <button class="accordion-button collapsed text-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapsed-count-about" aria-expanded="false" aria-controls="collapsed-count-about">
+                    Want to know more?
+                  </button>
+                </h2>
+                <div id="collapsed-count-about" class="accordion-collapse collapse" aria-labelledby="flush-count-about" data-bs-parent="#accordion-count">
+                  <div class="accordion-body">
+                    This is the number of hits that is expected for the resource in a given timeframe. This number should be the max burst number.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-4 thread-safe-container required">
+          <div class="card text-center">
+            <div class="card-header">
+              Resource Thread Safety
+            </div>
+            <div class="card-body">
+              <select id="thread-safe-bool" class="form-select text-center" aria-label="Default select example">
+                <option selected value="0">Thread Safe</option>
+                <option value="1">Not Thread Safe</option>
+              </select>
+            </div>
+            <div class="accordion accordion-flush" id="accordion-thread-safe">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-thread-safe-about">
+                  <button class="accordion-button collapsed text-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapsed-thread-safe-about" aria-expanded="false" aria-controls="collapsed-thread-safe-about">
+                    Want to know more?
+                  </button>
+                </h2>
+                <div id="collapsed-thread-safe-about" class="accordion-collapse collapse" aria-labelledby="flush-thread-safe-about" data-bs-parent="#accordion-thread-safe">
+                  <div class="accordion-body">
+                    Thread safety is important for concurrency. If a resource is not thread safe, then it concurrency is not an option for the resource.
+                    <p style="font-weight: bold">
+                      If thread safety is not known, then assume the resource is not thread safe.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-4 latency-container required">
+          <div class="card text-center">
+            <div class="card-header">
+              p95 Latency for resource
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-8">
+                  <div class="mb-3">
+                    <input type="number" step="0.01" class="form-control text-center" id="latency-number" placeholder="0.0">
+                  </div>
+                </div>
+                <div class="col-4">
+                  <select id="latency-increment" class="form-select" aria-label="Default select example">
+                    <option selected value="ms">ms</option>
+                    <option value="s">seconds</option>
+                    <option value="m">minutes</option>
+                    <option value="h">hours</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="accordion accordion-flush" id="accordion-latency">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-latency-about">
+                  <button class="accordion-button collapsed text-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapsed-latency-about" aria-expanded="false" aria-controls="collapsed-latency-about">
+                    Want to know more?
+                  </button>
+                </h2>
+                <div id="collapsed-latency-about" class="accordion-collapse collapse" aria-labelledby="flush-latency-about" data-bs-parent="#accordion-latency">
+                  <div class="accordion-body">
+                    p95 latency of a resource can be found via APM metrics if available. This metric is used to calculate the latency for the 95th percentile of jobs
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="row static-fields" style="display:none">
+        <div class="col-4 working-threads">
+          <div class="card text-center">
+            <div class="card-header">
+              Number of working threads
+            </div>
+            <div class="card-body">
+              <h2>10</h2>
+            </div>
+            <div class="accordion accordion-flush" id="accordion-working-threads">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-working-threads-about">
+                  <button class="accordion-button collapsed text-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapsed-working-threads-about" aria-expanded="false" aria-controls="collapsed-working-threads-about">
+                    Want to know more?
+                  </button>
+                </h2>
+                <div id="collapsed-working-threads-about" class="accordion-collapse collapse" aria-labelledby="flush-working-threads-about" data-bs-parent="#accordion-working-threads">
+                  <div class="accordion-body">
+                    This represents the number of total threads running. Threads running for a resource is equal to concurrency * parallelism
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-4 capacity">
+          <div class="card text-center">
+            <div class="card-header">
+              Capacity per thread
+            </div>
+            <div class="card-body">
+              <h3 class="second">TBD</h3>
+              <h3 class="minute">TBD</h3>
+              <h3 class="hour">TBD</h3>
+            </div>
+            <div class="accordion accordion-flush" id="accordion-capacity">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-capacity-about">
+                  <button class="accordion-button collapsed text-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapsed-capacity-about" aria-expanded="false" aria-controls="collapsed-capacity-about">
+                    Want to know more?
+                  </button>
+                </h2>
+                <div id="collapsed-capacity-about" class="accordion-collapse collapse" aria-labelledby="flush-capacity-about" data-bs-parent="#accordion-capacity">
+                  <div class="accordion-body">
+                    This represents the capacity of a single thread.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-4 concurrency">
+          <div class="card text-center">
+            <div class="card-header">
+              Job Concurrency
+            </div>
+            <div class="card-body">
+              <h3 class="second">TBD</h3>
+              <h3 class="minute">TBD</h3>
+              <h3 class="hour">TBD</h3>
+            </div>
+            <div class="accordion accordion-flush" id="accordion-concurrency">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-concurrency-about">
+                  <button class="accordion-button collapsed text-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapsed-concurrency-about" aria-expanded="false" aria-controls="collapsed-concurrency-about">
+                    Want to know more?
+                  </button>
+                </h2>
+                <div id="collapsed-concurrency-about" class="accordion-collapse collapse" aria-labelledby="flush-concurrency-about" data-bs-parent="#accordion-concurrency">
+                  <div class="accordion-body">
+                    This represents the jobs that can get completed in the current time threshold
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <br>
+
+      <div class="row non-required-fields">
+        <div class="col-6 resource-count">
+          <div class="concurrency-container">
+            <div class="card text-center">
+              <div class="card-header">
+                Concurrency count for resource
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-12">
+                    <div class="mb-3">
+                      <input type="number" class="form-control text-center" id="concurrency-count" value="1">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion accordion-flush" id="accordion-concurrency">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="flush-concurrency-about">
+                    <button class="accordion-button collapsed text-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapsed-concurrency-about" aria-expanded="false" aria-controls="collapsed-concurrency-about">
+                      Want to know more?
+                    </button>
+                  </h2>
+                  <div id="collapsed-concurrency-about" class="accordion-collapse collapse" aria-labelledby="flush-concurrency-about" data-bs-parent="#accordion-concurrency">
+                    <div class="accordion-body text-left">
+                      <p style="font-weight: bold;">
+                        Use Concurrency with caution
+                      </p>
+                      <hr>
+                      Concurrent resources must be thread safe.
+                      <hr>
+                      Concurrency can introduce "dead time" in the flame graph for APM. High concurrency means more threads are sharing resources. For resources that are I/O bound, threads can work wonderfully. For CPU bound intensive resources, threads will likely introduce more "Dead time" as the underlying resource is shared
+                      <hr>
+                      Real world practices of concurrency.
+                      <br>
+                      <p style="font-weight: bold;">Sidekiq:</p>
+                      <kbd>bundle exec sidekiq -c 10</kbd> spins up sidekiq with a concurrency of 10.
+                      <br>
+                      <br>
+                      <p style="font-weight: bold;">Puma:</p>
+                      <kbd>threads 5 10</kbd> in a puma config will spin X number of processes with 5 threads min and 10 threads max
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="parallel-container">
+            <div class="card text-center">
+              <div class="card-header">
+                Parallel count for resource
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-12">
+                    <div class="mb-3">
+                      <input type="number" class="form-control text-center" id="parallel-count-number" value="10">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion accordion-flush" id="accordion-parallel">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="flush-parallel-about">
+                    <button class="accordion-button collapsed text-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapsed-parallel-about" aria-expanded="false" aria-controls="collapsed-parallel-about">
+                      Want to know more?
+                    </button>
+                  </h2>
+                  <div id="collapsed-parallel-about" class="accordion-collapse collapse" aria-labelledby="flush-parallel-about" data-bs-parent="#accordion-parallel">
+                    <div class="accordion-body">
+                      Paralell resources spin up its on process on the underlying CPU. Ensure that the CPU has enough memory/cores/power to handle the number of paralel processes running
+                      <hr>
+                      Parallel resources look like:
+                      <ul>
+                        <li>Pods</li>
+                        <li>Containers</li>
+                        <li>Processes running on different PID's</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-6 max-counts">
+          <div class="resource-concurrency-container">
+            <div class="card text-center">
+              <div class="card-header">
+                Expected Job concurrency rate
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-6">
+                    <div class="mb-3">
+                      <input type="number" class="form-control text-center" id="resource-concurrency-count" placeholder="0">
+                    </div>
+                  </div>
+                  <div class="col-2">
+                    jobs per
+                  </div>
+                  <div class="col-4">
+                    <select id="resource-concurrency-select" class="form-select" aria-label="Default select example">
+                      <option value="ms">ms</option>
+                      <option selected value="s">seconds</option>
+                      <option value="m">minutes</option>
+                      <option value="h">hours</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion accordion-flush" id="accordion-resource-concurrency">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="flush-resource-concurrency-about">
+                    <button class="accordion-button collapsed text-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapsed-resource-concurrency-about" aria-expanded="false" aria-controls="collapsed-resource-concurrency-about">
+                      Want to know more?
+                    </button>
+                  </h2>
+                  <div id="collapsed-resource-concurrency-about" class="accordion-collapse collapse" aria-labelledby="flush-resource-concurrency-about" data-bs-parent="#accordion-resource-concurrency">
+                    <div class="accordion-body">
+                      Some resources are bounded by Job concurrency due to third party API's or other constraints. To build a resource map based on job concurrency, modify this number
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="sla-container">
+            <div class="card text-center">
+              <div class="card-header">
+                Expected SLA per resource
+              </div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-8">
+                    <div class="mb-3">
+                      <input type="number" class="form-control text-center" id="sla-resource-count" placeholder="0">
+                    </div>
+                  </div>
+                  <div class="col-4">
+                    <select id="sla-resource-select" class="form-select" aria-label="Default select example">
+                      <option value="ms">ms</option>
+                      <option selected value="s">seconds</option>
+                      <option value="m">minutes</option>
+                      <option value="h">hours</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion accordion-flush" id="accordion-sla">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="flush-sla-about">
+                    <button class="accordion-button collapsed text-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapsed-sla-about" aria-expanded="false" aria-controls="collapsed-sla-about">
+                      Want to know more?
+                    </button>
+                  </h2>
+                  <div id="collapsed-sla-about" class="accordion-collapse collapse" aria-labelledby="flush-sla-about" data-bs-parent="#accordion-sla">
+                    <div class="accordion-body">
+                      Not sure if this will stay. TBD
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <br>
+
+      <div class="row">
+        <div class="col-12 tldr">
+          <div class="card text-center">
+            <div class="card-header">
+              Summary of events
+            </div>
+            <div class="card-body">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr>
+    </div>
+    <script src='./assets/calculator.js' type='text/javascript'></script>
+    <script src='./assets/common/get.js' type='text/javascript'></script>
+    <script src='./assets/common/set.js' type='text/javascript'></script>
+    <script src='./assets/common.js' type='text/javascript'></script>
+    <script src='./assets/changes.js' type='text/javascript'></script>
+  </body>
+</html>
