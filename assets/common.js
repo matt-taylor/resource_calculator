@@ -18,6 +18,12 @@ function incrementToSecond(str){
   }
 }
 
+function changeResourceType() {
+  set = $(`.resource-type #resource-type-selector`).val()
+  $(`.request-type`).text(set)
+  $(`.request-type`).effect( "highlight", 1500)
+}
+
 function requiredObject() {
   return {
     latency: getLatencyInSeconds(),
@@ -38,8 +44,19 @@ function assignObject(){
 
 function updateInstance(){
   calculatorInstance = new Calculator(getThreadSafety(), getCountInSeconds(), getLatencyInSeconds())
-
   nonRequiredSetReadProp();
+}
+
+function threadSafetiness(bool){
+  if(bool){
+    $(`.resource-count #concurrency-count`).prop("disabled", false)
+    $(`.thread-safety-text`).hide()
+  } else {
+    original_val = $(`.resource-count #concurrency-count`).val()
+    $(`.resource-count #concurrency-count`).val(1)
+    $(`.resource-count #concurrency-count`).prop("disabled", true)
+    $(`.thread-safety-text`).show()
+  }
 }
 
 function updateCalculations(){
@@ -59,7 +76,7 @@ function updateCalculations(){
   setParallelCount(result.resourceParallel)
   setConcurrencyCount(result.resourceConcurrency)
   total_threads = result.resourceParallel * result.resourceConcurrency
-  setConcurrencyTotal(result.resourceConcurrency * total_threads * calculatorInstance.capacityPerSecond())
+  setConcurrencyTotal(total_threads * calculatorInstance.capacityPerSecond())
   setWorkingThread(total_threads)
 
   originalObject = assignObject();
@@ -86,6 +103,9 @@ function nonRequiredSetReadProp(){
     threads = 1
     if(getThreadSafety()){
       threads = getConcurrencyCount()
+      threadSafetiness(true)
+    } else {
+      threadSafetiness(false)
     }
     setConcurrencyTotal(threads * getParallelCount() * calculatorInstance.capacityPerSecond())
   }

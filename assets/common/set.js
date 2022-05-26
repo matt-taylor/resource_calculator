@@ -16,15 +16,17 @@ function setWorkingThread(value){
 }
 
 function setCapacity(value){
-  $(`.static-fields .capacity .card-body .second`).text(`${roundby(value, 3)} jobs/second`)
-  $(`.static-fields .capacity .card-body .minute`).text(`${roundby((value*60),3)} jobs/minute`)
-  $(`.static-fields .capacity .card-body .hour`).text(`${roundby((value*60*60),3)} jobs/hour`)
+  set = $(`.resource-type #resource-type-selector`).val()
+  $(`.static-fields .capacity .card-body .second`).text(`${roundby(value, 3)} ${set}/second`)
+  $(`.static-fields .capacity .card-body .minute`).text(`${roundby((value*60),3)} ${set}/minute`)
+  $(`.static-fields .capacity .card-body .hour`).text(`${roundby((value*60*60),3)} ${set}/hour`)
 }
 
 function setConcurrencyTotal(value){
-  $(`.static-fields .concurrency .card-body .second`).text(`${roundby(value, 3)} jobs/second`)
-  $(`.static-fields .concurrency .card-body .minute`).text(`${roundby((value*60),3)} jobs/minute`)
-  $(`.static-fields .concurrency .card-body .hour`).text(`${roundby((value*60*60),3)} jobs/hour`)
+  set = $(`.resource-type #resource-type-selector`).val()
+  $(`.static-fields .concurrency .card-body .second`).text(`${roundby(value, 3)} ${set}/second`)
+  $(`.static-fields .concurrency .card-body .minute`).text(`${roundby((value*60),3)} ${set}/minute`)
+  $(`.static-fields .concurrency .card-body .hour`).text(`${roundby((value*60*60),3)} ${set}/hour`)
 }
 
 function setTldr(value){

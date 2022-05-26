@@ -19,3 +19,8 @@ $(`.non-required-fields select`).change(function(elem) {
   updateCalculations();
 });
 
+$(`.resource-type #resource-type-selector`).change(function(elem) {
+  changeResourceType()
+});
+
+
