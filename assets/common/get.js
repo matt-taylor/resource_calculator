@@ -18,12 +18,6 @@ function getThreadSafety() {
   }
 }
 
-function getExpectedSla(){
-  count = parseInt($(`.sla-container #sla-resource-count`).val())
-  divider = incrementToSecond(`.sla-container #sla-resource-select`)
-  return (count * divider)
-}
-
 function getExpectedJobConcurrencyCount(){
   count = parseInt($(`.resource-concurrency-container #resource-concurrency-count`).val())
   divider = incrementToSecond(`.resource-concurrency-container #resource-concurrency-select`)
@@ -36,4 +30,22 @@ function getParallelCount(){
 
 function getConcurrencyCount(){
   return parseInt($(`.concurrency-container #concurrency-count`).val())
+}
+
+/////
+
+function getResource(){
+  return $(`.resource-type #resource-type-selector`).val()
+}
+
+function getDefaultConcurrency(){
+  return parseInt($(`.default-concurrency #default-concurrency-count`).val())
+}
+
+function getDefaultSkew(){
+  return parseFloat($(`.default-skew #default-skew-count`).val())
+}
+
+function getDefaultCapacity(){
+  return parseFloat($(`.default-capacity #default-capacity-count`).val())
 }

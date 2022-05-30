@@ -4,6 +4,11 @@ $(`.required-fields input`).change(function(elem) {
   updateInstance();
 });
 
+$(`.settings input`).change(function(elem) {
+  console.log(`selected: [${$(elem.target).attr('id')}]`)
+  updateInstance();
+});
+
 $(`.required-fields select`).change(function(elem) {
   console.log(`selected: [${$(elem.target).attr('id')}]`)
   updateInstance();
@@ -22,5 +27,4 @@ $(`.non-required-fields select`).change(function(elem) {
 $(`.resource-type #resource-type-selector`).change(function(elem) {
   changeResourceType()
 });
-
 

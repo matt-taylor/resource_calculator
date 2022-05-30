@@ -4,14 +4,24 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Resource Calcuator</title>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous"></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <meta property="og:url" content="https://matt-taylor.github.io/resource_calculator/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Resource Calculator" />
+    <meta property="og:description" content="Resource calulation made easy" />
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -43,11 +53,9 @@
             Resource Calculation is hard. This is a basic attempt to make it super easy. this plug and play formula should give you rough estimate on how to think about resources. That can be with how to calculate job concurrency while keeping queue size down. Or ensuring that you have enough resources to plug away at peak times.
             <hr>
             <h3>How to use this</h3>
-            Every section has a <kbd>What is this?</kbd> section. This section will help you learn more about what it is.
+            Every card has a <kbd>Want to know more?</kbd> section. This section will help you learn more about what the card means with regards to resource calculation.
             <br>
-            The top section is static information. This is required information that must be known before you can proceed
-            <br>
-            After the top section is complete, each input box can be changed.
+            There are three static cards that must be filled out before calculation can be made. The <kbd>Rate</kbd>, <kbd>Type</kbd>, and <kbd>Latency</kbd> of the resource. After completing these cards, the resource calculation playground will become available.
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -65,7 +73,7 @@
         <div class="col-4 count-container required">
           <div class="card text-center">
             <div class="card-header">
-              Utilization rate
+              Rate for <span class="request-type"> reqs</span>
             </div>
             <div class="card-body">
               <div class="row">
@@ -105,7 +113,7 @@
             </div>
           </div>
         </div>
-        <div class="col-4 ">
+        <div class="col-4">
           <div class="resource-type required">
             <div class="card text-center">
               <div class="card-header">
@@ -113,9 +121,6 @@
               </div>
               <div class="card-body">
                 <select id="resource-type-selector" class="form-select text-center" aria-label="Default select example">
-                  <option selected value="reqs">HTTP request</option>
-                  <option value="msgs">Hawker</option>
-                  <option value="jobs">Sidekiq</option>
                 </select>
               </div>
             </div>
@@ -184,6 +189,116 @@
                 <div id="collapsed-latency-about" class="accordion-collapse collapse" aria-labelledby="flush-latency-about" data-bs-parent="#accordion-latency">
                   <div class="accordion-body">
                     p95 latency of a resource can be found via APM metrics if available. This metric is used to calculate the latency for the 95th percentile of <span class="request-type">reqs</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <br>
+      <div class="row settings-button">
+        <div class="col-4 default-concurrency d-grid gap-2">
+          <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#default-concurrency-collapse" aria-expanded="false" aria-controls="default-concurrency-collapse">
+              Modify default Concurrency
+          </button>
+        </div>
+        <div class="col-4 default-capacity d-grid gap-2">
+          <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#default-capacity-collapse" aria-expanded="false" aria-controls="default-capacity-collapse">
+              Modify default Capacity
+          </button>
+        </div>
+        <div class="col-4 default-skew d-grid gap-2">
+          <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#default-skew-collapse" aria-expanded="false" aria-controls="default-skew-collapse">
+              Modify default Skew
+          </button>
+        </div>
+      </div>
+      <div class="row settings">
+        <div class="col-4 default-concurrency d-grid gap-2">
+          <div class="collapse" id="default-concurrency-collapse">
+            <div class="card text-center">
+              <div class="card-body">
+                <div class="mb-3">
+                  <input type="number" class="form-control text-center" id="default-concurrency-count" value="8">
+                </div>
+              </div>
+              <div class="accordion accordion-flush" id="accordion-default-concurrency">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="flush-default-concurrency-about">
+                    <button class="accordion-button collapsed text-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapsed-default-concurrency-about" aria-expanded="false" aria-controls="collapsed-default-concurrency-about">
+                      Want to know more?
+                    </button>
+                  </h2>
+                  <div id="collapsed-default-concurrency-about" class="accordion-collapse collapse" aria-labelledby="flush-default-concurrency-about" data-bs-parent="#accordion-default-concurrency">
+                    <div class="accordion-body">
+                      This is the default concurrency that is used for thread safe resources.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-4 default-capacity d-grid gap-2">
+          <div class="collapse" id="default-capacity-collapse">
+            <div class="card">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-6">
+                    <div class="mb-3">
+                      <input type="number" max="1" min="0" step="0.01" class="form-control text-center" id="default-capacity-count">
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    for <span class="request-type-long"></span>s
+                  </div>
+                </div>
+              </div>
+              <div class="accordion accordion-flush" id="accordion-default-capacity">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="flush-default-capacity-about">
+                    <button class="accordion-button collapsed text-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapsed-default-capacity-about" aria-expanded="false" aria-controls="collapsed-default-capacity-about">
+                      Want to know more?
+                    </button>
+                  </h2>
+                  <div id="collapsed-default-capacity-about" class="accordion-collapse collapse" aria-labelledby="flush-default-capacity-about" data-bs-parent="#accordion-default-capacity">
+                    <div class="accordion-body">
+                      Resource capacity is a measurment of a resources ability to continue to process data. For particular resources it is advantages to over provision in the even of resource latency or resource ingress burst.
+                      <br>
+                      Here, Capacity is referring to a percentage of the max ingress. The Overhead is the resources ability to handle abnormal behavior.
+                      <br>
+                      Below are the recommended default capacities for different resources
+                      <div class="default-capacity-enumerate">
+                        <ul id="default-capacity-list"></ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-4 default-skew d-grid gap-2">
+          <div class="collapse" id="default-skew-collapse">
+            <div class="card text-center">
+              <div class="card-body">
+                <div class="mb-3">
+                  <input type="number" step="0.001" min="0.000" max="0.5" class="form-control text-center" id="default-skew-count" value="0.005">
+                </div>
+              </div>
+              <div class="accordion accordion-flush" id="accordion-default-skew">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="flush-default-skew-about">
+                    <button class="accordion-button collapsed text-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapsed-default-concurrency-about" aria-expanded="false" aria-controls="collapsed-default-skew-about">
+                      Want to know more?
+                    </button>
+                  </h2>
+                  <div id="collapsed-default-skew-about" class="accordion-collapse collapse" aria-labelledby="flush-default-skew-about" data-bs-parent="#accordion-default-skew">
+                    <div class="accordion-body">
+                      The skew and capacity work together. Skew allows you to set a percentage +/- around the capacity where you deem it is still safe to proceed. Skews should be small.
+                    </div>
                   </div>
                 </div>
               </div>
@@ -278,8 +393,8 @@
       <div class="row non-required-fields">
         <div class="col-6 resource-count">
           <div class="concurrency-container">
-            <div class="card text-center">
-              <div class="card-header">
+            <div class="card">
+              <div class="card-header text-center">
                 Concurrency per process
               </div>
               <div class="card-body">
@@ -327,8 +442,8 @@
           </div>
           <br>
           <div class="parallel-container">
-            <div class="card text-center">
-              <div class="card-header">
+            <div class="card">
+              <div class="card-header text-center">
                 Parallel processes
               </div>
               <div class="card-body">
@@ -410,38 +525,41 @@
             </div>
           </div>
           <br>
-          <div class="sla-container">
+          <div class="queue-size-container" style="display: none;">
             <div class="card text-center">
               <div class="card-header">
-                Expected SLA per resource
+                Queue Size for <span class="request-type"> Reqs </span>
               </div>
               <div class="card-body">
-                <div class="row">
-                  <div class="col-8">
-                    <div class="mb-3">
-                      <input type="number" class="form-control text-center" id="sla-resource-count" placeholder="0">
-                    </div>
-                  </div>
-                  <div class="col-4">
-                    <select id="sla-resource-select" class="form-select" aria-label="Default select example">
-                      <option value="ms">ms</option>
-                      <option selected value="s">seconds</option>
-                      <option value="m">minutes</option>
-                      <option value="h">hours</option>
-                    </select>
-                  </div>
+                <h5 class="card-title">
+                </h5>
+                <div class="ingress">
+                  Ingress rate: <span class="rate"></span>
                 </div>
+                <div class="egress">
+                  Egress rate: <span class="rate"></span>
+                </div>
+                <hr>
+                <div class="capacity">
+                  <span class="request-type-long"></span>'s must be able to handle <span style="font-weight:bolder;"><span class="capacity-min-egress"></span> <span class="request-type-long"></span> per second</span>
+                  <br>
+                  Capacity percentage for <span class="request-type-long"></span> is <span class="percent" style="font-weight:bolder;"></span> of the total capacity.
+                </div>
+                <hr>
+                <div class="tldr" style="font-weight:bolder;"></div>
+                <hr>
+                <div class="message"></div>
               </div>
-              <div class="accordion accordion-flush" id="accordion-sla">
+              <div class="accordion accordion-flush" id="accordion-queue-size">
                 <div class="accordion-item">
-                  <h2 class="accordion-header" id="flush-sla-about">
-                    <button class="accordion-button collapsed text-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapsed-sla-about" aria-expanded="false" aria-controls="collapsed-sla-about">
+                  <h2 class="accordion-header" id="flush-queue-size-about">
+                    <button class="accordion-button collapsed text-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapsed-queue-size-about" aria-expanded="false" aria-controls="collapsed-queue-size-about">
                       Want to know more?
                     </button>
                   </h2>
-                  <div id="collapsed-sla-about" class="accordion-collapse collapse" aria-labelledby="flush-sla-about" data-bs-parent="#accordion-sla">
+                  <div id="collapsed-queue-size-about" class="accordion-collapse collapse" aria-labelledby="flush-queue-size-about" data-bs-parent="#accordion-queue-size">
                     <div class="accordion-body">
-                      Not sure if this will stay. TBD
+                      Most ingress points have the concept of a queue. SQS queue is the number of non-visibile messages. Sidekiq queue is the number of jobs in the Redis set. Puma and unicorn queue is the number of requests waiting for the application to start working on them
                     </div>
                   </div>
                 </div>
