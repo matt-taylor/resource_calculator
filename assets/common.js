@@ -136,7 +136,7 @@ function summary(queue_expectation, result) {
     parallelPer: result.resourceParallel,
     totalConcurrency: result.resourceParallel * result.resourceConcurrency,
     jobConcurrency: result.jobConcurrency,
-    ingress:
+    ingress: result.input_count
   }
 }
 
