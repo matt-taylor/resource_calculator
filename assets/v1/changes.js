@@ -27,4 +27,3 @@ $(`#share-link-modal`).on('show.bs.modal',function (e) {
   href = createUrl()
   setShareLink(href)
 });
-

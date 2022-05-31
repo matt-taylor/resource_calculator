@@ -274,7 +274,7 @@ function queueExpectation(egress_rate, ingress_rate) {
 
   // Within margin of error. This capacity fluttering around 100%
   if (evaluation.within_skew) {
-    tldr = `Good news! This resource is within the provided skew [${defaultSkewPercentage * 100}%] of the calculated capacity.`
+    tldr = `Good news! This resource is within the provided skew [${roundby(defaultSkewPercentage * 100, 2)}%] of the calculated capacity.`
     msg = ""
     if(evaluation.within_skew_larger){
       msg += `The egress rate is fluttering just above the ingress rate. This can cause capacity issues during high latency ${set} or increased bursts of ingress ${set}.`
