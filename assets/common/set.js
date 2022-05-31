@@ -3,14 +3,12 @@ function setExpectedJobConcurrencyCount(val_in_seconds){
   $(`.resource-concurrency-container #resource-concurrency-count`).stop(true, true)
   $(`.resource-concurrency-container #resource-concurrency-count`).val(roundby(val_in_seconds * multiplier, 2))
   $(`.resource-concurrency-container #resource-concurrency-count`).effect( "highlight", highlightAnimationShort)
-
 }
 
 function setQueueSizeExpectation(object){
-  console.dir(object)
   $(`.queue-size-container .card-title`).text(object.title)
-  $(`.queue-size-container .ingress .rate`).text(`${prettifyNumber(object.ingress_rate)} per second`)
-  $(`.queue-size-container .egress .rate`).text(`${prettifyNumber(object.egress_rate)} per second`)
+  $(`.queue-size-container .ingress .rate`).text(`${prettifyNumber(object.ingress_rate)} ${object.set} per second`)
+  $(`.queue-size-container .egress .rate`).text(`${prettifyNumber(object.egress_rate)} ${object.set} per second`)
   $(`.queue-size-container .message`).text(object.info)
   $(`.queue-size-container .tldr`).text(object.tldr)
   $(`.queue-size-container .card-body`).css("background", `rgb(${object.color.join(",")})`)
@@ -64,13 +62,51 @@ function setConcurrencyTotal(value){
 }
 
 function setTldr(value){
-  $(`.static-fields .tldr .card-body`).text(value)
+  $(`.tldr-container .card-body .col-8`).css("background", `rgb(${value.tldr_color.join(",")})`)
+
+  $(`.tldr-container .card-body .tldr`).text(value.tldr)
+  $(`.tldr-container .card-body .parallel`).text(value.parallelPer)
+  $(`.tldr-container .card-body .concurrency`).text(value.concurrencyPer)
+  $(`.tldr-container .card-body .total-treads`).text(value.totalConcurrency)
+
+  $(`.tldr-container .card-body .ingress-rate`).text(prettifyNumber(value.ingress))
+  $(`.tldr-container .card-body .egress-rate`).text(prettifyNumber(value.egress))
+
+  $(`.tldr-container .card-body .capacity-min-egress`).text(prettifyNumber(roundby(value.needed_egress_rate, 2)))
+  $(`.tldr-container .card-body .capacity`).text(roundby(value.default_capacity * 100, 2))
+  $(`.tldr-container .card-body .percent`).text(`${roundby(value.current_capacity_rate * 100, 2)}%`)
 }
 
 
-///
+function setShareLink(href){
+  $(`#share-link-modal .click_me`).attr(`href`, href)
+  $(`#share-link-modal .raw-link .click_me`).text(href)
+}
 
+function setDefaultConcurrency(value){
+  $(`.default-concurrency #default-concurrency-count`).val(value)
+}
+
+function setThreadSafe(value){
+  $(`.thread-safe-container #thread-safe-bool`).val()
+}
+
+function setResource(value){
+  $(`.resource-type #resource-type-selector`).val(value)
+}
+
+function setCountRate(value) {
+  $(`.count-container #counter-number`).val(value)
+}
+
+function setLatency(value) {
+  $(`.latency-container #latency-number`).val(value)
+}
 
 function setDefaultCapacity(value) {
   $(`.default-capacity #default-capacity-count`).val(value)
+}
+
+function setDefaultSkew(value) {
+  $(`.default-skew #default-skew-count`).val(value)
 }

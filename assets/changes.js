@@ -1,30 +1,30 @@
 // Assign original object on changes to the requried fields
 $(`.required-fields input`).change(function(elem) {
-  console.log(`selected: [${$(elem.target).attr('id')}]`)
   updateInstance();
 });
 
 $(`.settings input`).change(function(elem) {
-  console.log(`selected: [${$(elem.target).attr('id')}]`)
   updateInstance();
 });
 
 $(`.required-fields select`).change(function(elem) {
-  console.log(`selected: [${$(elem.target).attr('id')}]`)
   updateInstance();
 });
 
 $(`.non-required-fields input`).change(function(elem) {
-  console.log(`selected: [${$(elem.target).attr('id')}]`)
   updateCalculations();
 });
 
 $(`.non-required-fields select`).change(function(elem) {
-  console.log(`selected: [${$(elem.target).attr('id')}]`)
   updateCalculations();
 });
 
 $(`.resource-type #resource-type-selector`).change(function(elem) {
   changeResourceType()
+});
+
+$(`#share-link-modal`).on('show.bs.modal',function (e) {
+  href = createUrl()
+  setShareLink(href)
 });
 

@@ -32,8 +32,6 @@ function getConcurrencyCount(){
   return parseInt($(`.concurrency-container #concurrency-count`).val())
 }
 
-/////
-
 function getResource(){
   return $(`.resource-type #resource-type-selector`).val()
 }

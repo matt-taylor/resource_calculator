@@ -25,6 +25,7 @@ $.each(defaultCapacity, function(key, value) {
 });
 
 $(`#default-capacity-count`).val(resourceType().capacity)
+$(`#default-skew-collapse #default-skew-count`).val(resourceType().skew)
 $(`.request-type-long`).text(resourceType().long)
 $(`.request-type`).text(resourceType().short)
 
@@ -108,6 +109,12 @@ function updateCalculations(){
     updateInstance()
   }
   result = calculatorInstance.change(originalObject, currentObject)
+  commonUpdates(result)
+  return []
+}
+
+function commonUpdates(result) {
+  $(`.tldr-container`).show()
   $(`#update-alert`).stop(true, true).hide();
 
   setExpectedJobConcurrencyCount(result.jobConcurrency)
@@ -122,22 +129,31 @@ function updateCalculations(){
   setQueueSizeExpectation(queue_expectation)
 
   summary(queue_expectation, result)
-
+  updateMetaTags()
+  $(`.tldr-container .col-8`)
   originalObject = assignObject();
   alert = `Updated fields based on kingpin [${result.keyChange}]`
   $(`#update-alert`).text(alert)
   $(`#update-alert`).show().delay(2000).fadeOut(500)
-  return []
 }
 
 function summary(queue_expectation, result) {
-  return {
+  object = {
     concurrencyPer: result.resourceConcurrency,
     parallelPer: result.resourceParallel,
     totalConcurrency: result.resourceParallel * result.resourceConcurrency,
     jobConcurrency: result.jobConcurrency,
-    ingress: result.input_count
+    ingress: queue_expectation.ingress_rate,
+    egress: queue_expectation.egress_rate,
+    capacity: queue_expectation.current_capacity_rate,
+    tldr: queue_expectation.tldr,
+    tldr_color: queue_expectation.color,
+    current_capacity_rate: queue_expectation.current_capacity_rate,
+    capacity: queue_expectation.current_capacity_rate,
+    default_capacity: queue_expectation.capacity_percent,
+    needed_egress_rate: queue_expectation.needed_egress_rate
   }
+  setTldr(object);
 }
 
 function nonRequiredSetReadProp(){
@@ -147,6 +163,7 @@ function nonRequiredSetReadProp(){
     $('.non-required-fields select').prop('disabled', true);
     $(`.static-fields`).hide()
     $(`.queue-size-container`).hide()
+    $(`.tldr-container`).hide()
     toggleTooltips(missing, true)
   } else {
     $(`.static-fields`).show()
@@ -239,7 +256,8 @@ function capacityCalculation(egress_rate, ingress_rate) {
     within_skew: within_skew,
     within_skew_larger: within_skew_larger,
     within_skew_perfect: within_skew_perfect,
-    within_skew_smaller: within_skew_smaller
+    within_skew_smaller: within_skew_smaller,
+    capacity_percent: capacity_percent
   }
 }
 
@@ -256,7 +274,7 @@ function queueExpectation(egress_rate, ingress_rate) {
 
   // Within margin of error. This capacity fluttering around 100%
   if (evaluation.within_skew) {
-    tldr = `Good news! This resource is within the provided skew [${defaultSkewPercentage}] of the calculated capacity.`
+    tldr = `Good news! This resource is within the provided skew [${defaultSkewPercentage * 100}%] of the calculated capacity.`
     msg = ""
     if(evaluation.within_skew_larger){
       msg += `The egress rate is fluttering just above the ingress rate. This can cause capacity issues during high latency ${set} or increased bursts of ingress ${set}.`
