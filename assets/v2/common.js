@@ -135,7 +135,6 @@ function commonUpdates(result) {
   setQueueSizeExpectation(queue_expectation)
 
   summary(queue_expectation, result)
-  updateMetaTags()
   $(`.tldr-container .col-8`)
   originalObject = assignObject();
   alert = `Updated fields based on kingpin [${result.keyChange}]`
