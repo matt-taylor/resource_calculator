@@ -1,3 +1,7 @@
+$(function() {
+  attemptUsingUrlParams();
+});
+
 function copyURLToClipboard() {
   navigator.clipboard.writeText(createUrl());
 }
@@ -37,9 +41,39 @@ function attemptUsingUrlParams(){
   object.resourceConcurrency = parseInt(params.get(`concurrency`))
   object.resourceParallel = parseInt(params.get(`parallel`))
   result = calculatorInstance.primaryResourceBased(object)
-
   commonUpdates(result)
 }
+
+function updateMeta(){
+  params = new URLSearchParams(window.location.search);
+  if(!validateParameters(params)) {
+    console.log(`Incoming parameters are inVALID not setting metadata`)
+    return
+  }
+  thread_safe = params.get(`thread_safe`) ? "0" : "1"
+  count = parseInt(params.get(`count`))
+  latency_in_seconds = parseFloat(params.get(`latency`)) * 1000
+  concurrency = params.get(`default_concurrency`)
+  calculator = new Calculator(thread_safe, count, latency_in_seconds, concurrency)
+
+  object = {
+    resourceConcurrency: parseInt(params.get(`concurrency`)),
+    resourceParallel: parseInt(params.get(`parallel`)),
+  }
+  result = calculator.primaryResourceBased(object)
+  total_threads = result.resourceParallel * result.resourceConcurrency
+  resource_type = defaultCapacity[params.get(`resource`)]
+  ingress = calculator.input_count
+  egress = total_threads * calculator.capacityPerSecond()
+  capacity = parseFloat(params.get(`capacity`))
+  skew = parseFloat(params.get(`skew`))
+  queue_tldr = queueExpectation(egress * 1000, ingress, resource_type, skew, capacity)
+  msg =`${queue_tldr.tldr}. Using ${object.resourceParallel} parrallel proceses running ${object.resourceConcurrency} concurrent threads each will yield ${total_threads} total threads. ${queue_tldr.info}`
+  jQuery("meta[property='og\\:description']").attr(`content`, msg);
+}
+
+
+updateMeta(); // yes run this inline to modify the meta propertes
 
 function validateParameters(params){
   keys = Object.keys(urlParameters());
@@ -64,11 +98,6 @@ function validValue(value) {
   return true
 }
 
-function updateMetaTags() {
-  description = $(`.tldr-container .col-8`).text().replace(/\s+/g, " ");
-  jQuery("meta[property='og\\:description']").attr(`content`, description);
-}
-
 function urlParameters(){
   return {
     count: getCountInSeconds(),
@@ -82,6 +111,3 @@ function urlParameters(){
     default_concurrency: getDefaultConcurrency()
   }
 }
-
-
-attemptUsingUrlParams();

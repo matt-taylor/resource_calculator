@@ -104,9 +104,9 @@ function setLatency(value) {
 }
 
 function setDefaultCapacity(value) {
-  $(`.default-capacity #default-capacity-count`).val(value)
+  $(`.default-capacity #default-capacity-count`).val(value * 100)
 }
 
 function setDefaultSkew(value) {
-  $(`.default-skew #default-skew-count`).val(value)
+  $(`.default-skew #default-skew-count`).val(value * 100)
 }

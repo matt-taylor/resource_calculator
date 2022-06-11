@@ -1,33 +1,39 @@
-var originalObject = assignObject(); // Store initial reading for the original object -- used to calculate changes
+$(function() {
+
+  originalObject = assignObject(); // Store initial reading for the original object -- used to calculate changes
+  nonRequiredSetReadProp(); // Initialize state for tooltips
+
+  $.each(defaultCapacity, function(key, value) {
+    val = value.long || value.short
+    if(value.default == true){
+      $(`#resource-type-selector`).append($("<option></option>")
+       .attr("value", key).attr("selected", true).text(val));
+    } else {
+      $(`#resource-type-selector`).append($("<option></option>")
+       .attr("value", key).text(val));
+    }
+    __capacity = value.capacity * 100
+    __overhead = (__capacity == 100) ? "no overhead" : `${100 - __capacity}% overhead`
+    $(`#default-capacity-list`).append($("<li></li>").text(`${value.long} default capacity is ${__capacity}% leaving ${__overhead}`))
+  });
+
+  setDefaultCapacity(resourceType().capacity)
+  setDefaultSkew(resourceType().skew)
+  $(`.request-type-long`).text(resourceType().long)
+  $(`.request-type`).text(resourceType().short)
+
+
+  console.log("Loaded document ready")
+});
+var originalObject = null
 var calculatorInstance = undefined; // Initialize a top level variable for the calculator
 var highlightAnimationLong = 1500
 var highlightAnimationShort = 1500
-nonRequiredSetReadProp(); // Initialize state for tooltips
-
 var defaultCapacity = {
   requests: { long: "HTTP Request", short: "reqs", skew: 0.00, capacity: 0.85, default: true },
   sidekiq: { long: "Sidekiq", short: "jobs", skew: 0.05, capacity: 1.0, default: false },
   hawker: { long: "Hawker", short: "msgs", skew: 0.05, capacity: 1.0, default: false },
 }
-
-$.each(defaultCapacity, function(key, value) {
-  val = value.long || value.short
-  if(value.default == true){
-    $(`#resource-type-selector`).append($("<option></option>")
-     .attr("value", key).attr("selected", true).text(val));
-  } else {
-    $(`#resource-type-selector`).append($("<option></option>")
-     .attr("value", key).text(val));
-  }
-  __capacity = value.capacity * 100
-  __overhead = (__capacity == 100) ? "no overhead" : `${100 - __capacity}% overhead`
-  $(`#default-capacity-list`).append($("<li></li>").text(`${value.long} default capacity is ${__capacity}% leaving ${__overhead}`))
-});
-
-$(`#default-capacity-count`).val(resourceType().capacity)
-$(`#default-skew-collapse #default-skew-count`).val(resourceType().skew)
-$(`.request-type-long`).text(resourceType().long)
-$(`.request-type`).text(resourceType().short)
 
 function incrementToSecond(str){
   value = $(`${str}`).val()
@@ -55,7 +61,7 @@ function resourceType() {
 
 function changeResourceType() {
   setDefaultCapacity(resourceType().capacity)
-  $(`#default-skew-collapse #default-skew-count`).val(resourceType().skew)
+  setDefaultSkew(resourceType().skew)
 
   $(`.request-type`).text(resourceType().short)
   $(`.request-type-long`).text(resourceType().long)
@@ -223,9 +229,9 @@ function missingRequiredInputs(){
   return missing_keys
 }
 
-function capacityCalculation(egress_rate, ingress_rate) {
-  capacity_percent = getDefaultCapacity();
-  defaultSkewPercentage = Math.abs(getDefaultSkew());
+function capacityCalculation(egress_rate, ingress_rate, skew = null, capacity) {
+  capacity_percent = capacity || getDefaultCapacity();
+  defaultSkewPercentage = skew || Math.abs(getDefaultSkew());
   additional_capacity_needed = (1 + (1 - capacity_percent));
   needed_egress_rate = ingress_rate * additional_capacity_needed;
   current_capacity_rate = egress_rate / needed_egress_rate
@@ -242,10 +248,10 @@ function capacityCalculation(egress_rate, ingress_rate) {
     upper_skew_bound = 1+defaultSkewPercentage
     if(1-current_capacity_rate == 0) { // Capacity is perfect with no margin of error
       within_skew_perfect = true
-    } else if(1-current_capacity_rate > 0){ // Capacity is has slight margin of error and over provisioned at times
-      within_skew_larger = true
-    } else { // Capacity is has no margin of error and under provisioned at times
+    } else if(1-current_capacity_rate > 0){ // Capacity is has no margin of error and under provisioned at times
       within_skew_smaller = true
+    } else { // Capacity is has slight margin of error and over provisioned at times
+      within_skew_larger = true
     }
   }
 
@@ -261,11 +267,11 @@ function capacityCalculation(egress_rate, ingress_rate) {
   }
 }
 
-function queueExpectation(egress_rate, ingress_rate) {
-  resource = resourceType();
-  evaluation = capacityCalculation(egress_rate, ingress_rate)
+function queueExpectation(egress_rate, ingress_rate, resource_type = null, skew = null, capacity = null) {
+  resource = resource_type || resourceType();
+  console.log(`egress_rate: ${egress_rate} -- ingress_rate: ${ingress_rate} -- resource_type: ${resource_type} -- skew: ${skew}`)
+  evaluation = capacityCalculation(egress_rate, ingress_rate, skew, capacity)
   egress_rate = roundby(egress_rate, 2)
-
   set = resource.short
   obj = { ...evaluation, set: set, egress_rate: egress_rate, ingress_rate: ingress_rate }
 

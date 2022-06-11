@@ -41,9 +41,10 @@ function getDefaultConcurrency(){
 }
 
 function getDefaultSkew(){
-  return parseFloat($(`.default-skew #default-skew-count`).val())
+  return parseFloat($(`.default-skew #default-skew-count`).val()) / 100
 }
 
 function getDefaultCapacity(){
-  return parseFloat($(`.default-capacity #default-capacity-count`).val())
+  value = parseFloat($(`.default-capacity #default-capacity-count`).val())
+  return value / 100
 }
